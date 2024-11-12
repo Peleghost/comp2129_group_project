@@ -1,5 +1,6 @@
 ﻿using static System.Console;
 using static comp2129_group_project.Util.Util;
+using comp2129_group_project.BookingSubMenu;
 
 namespace comp2129_group_project.Display
 {
@@ -14,7 +15,7 @@ namespace comp2129_group_project.Display
             WriteLine("-----------------------------\n");
             WriteLine("1) Customers");
             WriteLine("2) Flights");
-            WriteLine("3) Bookings\n");
+            WriteLine("3) Bookings");
             WriteLine("0) Exit");
             WriteLine("-----------------------------");
             Write("> ");
@@ -57,20 +58,13 @@ namespace comp2129_group_project.Display
             return GetInput(5);
         }
 
-        // Display bookings menu
+        // Display booking menu
         public static string MenuBookings()
         {
             Clear();
-            WriteLine("------------------------------");
-            WriteLine("---------- Bookings ----------");
-            WriteLine("------------------------------");
-            WriteLine("1) Make Booking");
-            WriteLine("2) View Bookings\n");
-            WriteLine("0) Main Menu");
-            WriteLine("------------------------------");
-            Write("> ");
-
-            return GetInput(3);
+            BookingMenu bookingMenu = new BookingMenu(); 
+            bookingMenu.ShowBookingMenu();  
+            return "0";  
         }
 
         // Display exit menu

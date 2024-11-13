@@ -1,32 +1,41 @@
-﻿namespace comp2129_group_project.Entities
+﻿using System;
+
+namespace comp2129_group_project.Entities
 {
     public class Booking
     {
-        // Auto increment id for each new booking created
-        // on the shell instance
-        private static int i = 0;
+        // Static counter for unique booking IDs
+        private static int bookingCounter = 100; // Start with 100 as the initial booking number
 
-        private int Id { get; set; } = ++i;
+        // Unique Booking ID for each booking
+        public int BookingId { get; } // Read-only, automatically assigned ID
+        public string BookingNum { get; } // Display-friendly booking number
+        public string Date { get; }       // Booking date as a formatted string
+        public Customer Customer { get; } // Associated customer
+        public Flight Flight { get; }     // Associated flight
 
-        // BookingId to be used for internal querying purposes
-        // May be removed if not useful
-        public int BookingId { get; set; }
+        // Default constructor (optional, if no default values are needed)
+        public Booking() { }
 
-        public string? BookingNum { get; set; } = new Random().Next(100, 999).ToString();
-        public DateTime Date { get; set; } = DateTime.Now;
-        public Customer? Customer { get; set; }
-        public Flight? Flight { get; set; }
-
-        public Booking()
+        // Main constructor to create a booking with Customer and Flight
+        public Booking(Customer customer, Flight flight)
         {
-        }
+            // Assign unique BookingId and BookingNum
+            BookingId = bookingCounter++;
+            BookingNum = BookingId.ToString();
 
-        public Booking(string bookingNum, Customer customer, Flight flight)
-        {
-            BookingId = Id;
-            BookingNum = bookingNum;
+            // Set the date in the required format
+            Date = DateTime.Now.ToString("MM/dd/yyyy h:mm tt");
+
+            // Associate the booking with the specified customer and flight
             Customer = customer;
             Flight = flight;
+        }
+
+        // Override ToString to provide a formatted booking display
+        public override string ToString()
+        {
+            return $"Booking No: {BookingNum}, Date: {Date}, Customer: {Customer.FirstName} {Customer.LastName}, Flight No: {Flight.FlightId}";
         }
     }
 }

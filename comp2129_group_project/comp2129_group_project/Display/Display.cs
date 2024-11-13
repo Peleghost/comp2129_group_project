@@ -1,11 +1,27 @@
-﻿using static System.Console;
+﻿using System;
+using static System.Console;
 using static comp2129_group_project.Util.Util;
 using comp2129_group_project.BookingSubMenu;
+using comp2129_group_project.Entities;
 
 namespace comp2129_group_project.Display
 {
     public class Display
     {
+        // Define customers and flights arrays at the class level
+        private static Customer[] customers = new Customer[5];
+        private static Flight[] flights = new Flight[5];
+
+        // Initialize sample data for customers and flights
+        public static void InitializeData()
+        {
+            customers[0] = new Customer("John", "Doe", 0);
+            customers[1] = new Customer("Jane", "Smith", 0);
+
+            flights[0] = new Flight("New York", "Los Angeles");
+            flights[1] = new Flight("Chicago", "Miami");
+        }
+
         // Display the main menu
         public static string MenuMain()
         {
@@ -62,7 +78,9 @@ namespace comp2129_group_project.Display
         public static string MenuBookings()
         {
             Clear();
-            BookingMenu bookingMenu = new BookingMenu(); 
+            // Ensure temporary data is initialized
+            InitializeData();
+            BookingMenu bookingMenu = new BookingMenu(customers, flights); 
             bookingMenu.ShowBookingMenu();  
             return "0";  
         }

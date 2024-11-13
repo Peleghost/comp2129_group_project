@@ -10,7 +10,7 @@ namespace comp2129_group_project
     //
     // Fellipe C.T.C - 101497831
     // Ayesha Akbar --
-    // Claire Lee ----
+    // Claire Lee - 100882058
     // Suthan S. -----
     //
     //---------------------------------------------
@@ -59,8 +59,7 @@ namespace comp2129_group_project
                         {
                             userInput = MenuMain();
                         }
-
-                        // TODO: Handle bookings menu items
+                        
                         break;
 
                     // Exit

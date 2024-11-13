@@ -1,12 +1,22 @@
 using System;
-using System.Collections.Generic;
+using comp2129_group_project.Entities;
 using comp2129_group_project.Util;
 
 namespace comp2129_group_project.BookingSubMenu
 {
     public class BookingMenu
     {
-        private List<string> bookings = new List<string>();
+        private string[] bookings = new string[100]; // Fixed-size array for bookings
+        private int bookingCount = 0; // Counter to keep track of bookings
+        private Customer[] customers; // Array of existing customers
+        private Flight[] flights;     // Array of existing flights
+
+        // Constructor accepts existing customers and flights arrays
+        public BookingMenu(Customer[] customers, Flight[] flights)
+        {
+            this.customers = customers;
+            this.flights = flights;
+        }
 
         public void ShowBookingMenu()
         {
@@ -52,25 +62,49 @@ namespace comp2129_group_project.BookingSubMenu
             Console.Clear();
             Console.WriteLine("Make a Booking");
 
-            Console.Write("Enter customer name: ");
-            string customerName = Console.ReadLine() ?? "" ;
-
-            Console.Write("Enter flight number: ");
-            string flightNumber = Console.ReadLine() ?? "";
-
-            Console.Write("Enter booking date (YYYY-MM-DD): ");
-            string bookingDate = Console.ReadLine() ?? "";
-
-            if (!string.IsNullOrEmpty(customerName) && !string.IsNullOrEmpty(flightNumber) && DateTime.TryParse(bookingDate, out DateTime date))
+            // Display existing customers
+            Console.WriteLine("Available Customers:");
+            foreach (var customer in customers)
             {
-                string bookingDetails = $"Customer: {customerName}, Flight: {flightNumber}, Date: {date.ToShortDateString()}";
-                bookings.Add(bookingDetails);
-                Console.WriteLine("Booking successfully created!");
+                if (customer != null)
+                    Console.WriteLine($"ID: {customer.CustomerId}, Name: {customer.FirstName} {customer.LastName}");
             }
-            else
+
+            // Get and validate customer ID
+            Console.Write("Enter customer ID: ");
+            if (!int.TryParse(Console.ReadLine(), out int customerId) || !IsValidCustomerId(customerId))
             {
-                Console.WriteLine("Invalid input. Please make sure all fields are filled correctly.");
+                Console.WriteLine("Invalid customer ID.");
+                return;
             }
+
+            // Display existing flights
+            Console.WriteLine("\nAvailable Flights:");
+            foreach (var flight in flights)
+            {
+                if (flight != null)
+                    Console.WriteLine($"Flight No: {flight.FlightId}, Origin: {flight.Origin}, Destination: {flight.Destination}");
+            }
+
+            // Get and validate flight ID
+            Console.Write("Enter flight ID: ");
+            if (!int.TryParse(Console.ReadLine(), out int flightId) || !IsValidFlightId(flightId))
+            {
+                Console.WriteLine("Invalid flight ID.");
+                return;
+            }
+
+            // Check if we can add another booking
+            if (bookingCount >= bookings.Length)
+            {
+                Console.WriteLine("Unable to create booking. Booking limit reached.");
+                return;
+            }
+
+            // Create the booking entry
+            string bookingDetails = $"Customer ID: {customerId}, Flight ID: {flightId}, Date: {DateTime.Now:yyyy-MM-dd}";
+            bookings[bookingCount++] = bookingDetails;
+            Console.WriteLine("Booking successfully created!");
         }
 
         private void ViewBookings()
@@ -78,17 +112,39 @@ namespace comp2129_group_project.BookingSubMenu
             Console.Clear();
             Console.WriteLine("View Bookings");
 
-            if (bookings.Count > 0)
+            if (bookingCount > 0)
             {
-                foreach (var booking in bookings)
+                for (int i = 0; i < bookingCount; i++)
                 {
-                    Console.WriteLine(booking);
+                    Console.WriteLine(bookings[i]);
                 }
             }
             else
             {
                 Console.WriteLine("No bookings found.");
             }
+        }
+
+        // Helper method to verify customer ID exists in customers array
+        private bool IsValidCustomerId(int customerId)
+        {
+            foreach (var customer in customers)
+            {
+                if (customer != null && customer.CustomerId == customerId)
+                    return true;
+            }
+            return false;
+        }
+
+        // Helper method to verify flight ID exists in flights array
+        private bool IsValidFlightId(int flightId)
+        {
+            foreach (var flight in flights)
+            {
+                if (flight != null && flight.FlightId == flightId)
+                    return true;
+            }
+            return false;
         }
     }
 }

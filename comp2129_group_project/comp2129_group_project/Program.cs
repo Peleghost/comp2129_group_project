@@ -1,5 +1,4 @@
-﻿using comp2129_group_project.Entities;
-using static comp2129_group_project.Display.Display;
+﻿using static comp2129_group_project.Display.Display;
 
 namespace comp2129_group_project
 {

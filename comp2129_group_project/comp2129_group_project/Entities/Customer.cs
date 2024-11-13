@@ -10,18 +10,19 @@
         public int CustomerId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public int NumOfFlights { get; set; }
+        public string? Phone { get; set; }
+        public int NumOfBookings { get; set; }
 
         public Customer()
         {
         }
 
-        public Customer(string firstName, string lastName, int numOfFlights)
+        public Customer(string firstName, string lastName, string phone)
         {
             CustomerId = Id;
             FirstName = firstName;
             LastName = lastName;
-            NumOfFlights = numOfFlights;
+            Phone = phone;
         }
     }
 }

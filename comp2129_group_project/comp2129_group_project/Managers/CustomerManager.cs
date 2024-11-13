@@ -1,19 +1,20 @@
-using System;
+using comp2129_group_project.Entities;
 
 namespace comp2129_group_project
 {
     public class CustomerManager
     {
-        private string[] customers;
+        // Create customer objects to populate array
+        private Customer[] customers;
         private int customernumCount;
 
         public CustomerManager(int maxiumCustomers)
         {
-            customers = new string[maxiumCustomers];
+            //customers = new string[maxiumCustomers];
             customernumCount = 0;
         }
 
-        public void AddanewCustomer()
+        public void AddCustomer()
         {
             if (customernumCount >= customers.Length)
             {
@@ -23,6 +24,7 @@ namespace comp2129_group_project
             }
 
             Console.Write("Please enter a customer name: ");
+
             string customerName = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(customerName))
@@ -32,7 +34,7 @@ namespace comp2129_group_project
                 return;
             }
 
-            customers[customernumCount] = customerName;
+            //customers[customernumCount] = customerName;
             customernumCount++;
             Console.WriteLine("The customer has been added successfully.");
             Console.ReadKey();

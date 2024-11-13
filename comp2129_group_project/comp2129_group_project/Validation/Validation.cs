@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using comp2129_group_project.Entities;
+using System.Text.RegularExpressions;
 
 namespace comp2129_group_project.Validation
 {
@@ -27,6 +28,18 @@ namespace comp2129_group_project.Validation
                 Console.WriteLine(ex.Message);
                 return "";
             }
+        }
+
+        public static bool CustomerExists(string name, Customer[] customers)
+        {
+            foreach (Customer customer in customers)
+            {
+                if (customer.FirstName == name)
+                {
+                    return true;
+                }
+            }
+                return false;
         }
     }
 }

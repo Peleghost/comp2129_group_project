@@ -1,4 +1,5 @@
-﻿using static comp2129_group_project.Display.Display;
+﻿using comp2129_group_project.Managers;
+using static comp2129_group_project.Display.Display;
 
 namespace comp2129_group_project
 {
@@ -20,6 +21,9 @@ namespace comp2129_group_project
             //
             // Main execution of program
             //
+
+            FileManager fileManager = new FileManager();
+            fileManager.CreateFiles();
 
             // Display main menu
             string userInput = MenuMain();

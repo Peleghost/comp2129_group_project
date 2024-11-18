@@ -73,6 +73,29 @@ namespace comp2129_group_project.Managers
             Console.ReadKey();
         }
 
+        public Customer? FindCustomerById(string customerId)
+        {
+            string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
+
+            foreach (string line in fileContent)
+            {
+                if (string.IsNullOrEmpty(line)) continue;
+
+                // Each line format: FirstName:LastName:Phone
+                string[] parts = line.Split(":");
+                string currentCustomerId = parts[0]; // Assuming Customer ID is stored in the first part
+
+                if (currentCustomerId == customerId)
+                {
+                    // Return a matching Customer object
+                    return new Customer(parts[0], parts[1], parts[2]);
+                }
+            }
+
+            // No matching customer found
+            return null;
+        }
+
         public void DeleteCustomer()
         {
             if (customerCount == 0)

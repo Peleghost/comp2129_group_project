@@ -1,6 +1,6 @@
 ﻿using static System.Console;
 using static comp2129_group_project.Util.Util;
-using comp2129_group_project.BookingSubMenu;
+using comp2129_group_project.SubMenus;
 
 namespace comp2129_group_project.Display
 {
@@ -85,20 +85,47 @@ namespace comp2129_group_project.Display
             WriteLine("2) View Flights");
             WriteLine("3) View Particular Flight");
             WriteLine("4) Delete Flight\n");
-            WriteLine("0) Main Menu");
+            WriteLine("5) Main Menu");
             WriteLine("-----------------------------");
             Write("> ");
 
             return GetInput(5);
         }
+        
+        public static void DisplayAllFlights(string[] flights)
+        {
 
+            WriteLine("-----------------------------------------------------------------");
+            WriteLine("- Flight Number | Origin | Destination | Max Seats | Passengers -");
+            WriteLine("-----------------------------------------------------------------");
+
+            int count = 0;
+            foreach (string flight in flights)
+            {
+                if (string.IsNullOrEmpty(flight))
+                {
+                    continue;
+                }
+
+                string[] temp = flight.Split(':');
+                WriteLine($"{temp[0]} | {temp[1]} | {temp[2]} | {temp[3]} | {temp[4]}");
+                WriteLine("-----------------------------------------------------------------");
+            }
+        }
         // Display booking menu
         public static string MenuBookings()
         {
             Clear();
-            BookingMenu bookingMenu = new BookingMenu(); 
-            bookingMenu.ShowBookingMenu();  
-            return "0";  
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("---------- Booking Menu ---------");
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("1) Make Booking");
+            Console.WriteLine("2) View Bookings");
+            Console.WriteLine("3) Back to main menu");
+            Console.WriteLine("---------------------------------");
+            Console.Write("> ");
+        
+            return GetInput(3);  
         }
 
         // Display exit menu

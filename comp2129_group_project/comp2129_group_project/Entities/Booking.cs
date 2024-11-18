@@ -2,31 +2,17 @@
 {
     public class Booking
     {
-        // Auto increment id for each new booking created
-        // on the shell instance
-        private static int i = 0;
+        public int BookingNumber { get; set; } // Auto-assigned booking number
+        public string Date { get; set; } // Date the booking was made
+        public Flight Flight { get; set; } // Flight associated with the booking
+        public Customer Customer { get; set; } // Customer associated with the booking
 
-        private int Id { get; set; } = ++i;
-
-        // BookingId to be used for internal querying purposes
-        // May be removed if not useful
-        public int BookingId { get; set; }
-
-        public string? BookingNum { get; set; } = new Random().Next(100, 999).ToString();
-        public DateTime Date { get; set; } = DateTime.Now;
-        public Customer? Customer { get; set; }
-        public Flight? Flight { get; set; }
-
-        public Booking()
+        public Booking(int bookingNumber, Flight flight, Customer customer)
         {
-        }
-
-        public Booking(string bookingNum, Customer customer, Flight flight)
-        {
-            BookingId = Id;
-            BookingNum = bookingNum;
-            Customer = customer;
+            BookingNumber = bookingNumber;
+            Date = DateTime.Now.ToString(@"MM\/dd\/yyyy h\:mm tt"); // Date the booking is created
             Flight = flight;
+            Customer = customer;
         }
     }
 }

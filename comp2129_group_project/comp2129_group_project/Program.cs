@@ -1,6 +1,9 @@
 using static comp2129_group_project.Display.Display;
 using comp2129_group_project.Managers;
 using static comp2129_group_project.SubMenus.CustomerMenu;
+using static comp2129_group_project.SubMenus.BookingMenu;
+using static comp2129_group_project.SubMenus.FlightMenu;
+
 
 namespace comp2129_group_project
 {
@@ -11,7 +14,7 @@ namespace comp2129_group_project
     //
     // Fellipe C.T.C - 101497831
     // Ayesha Akbar -- 100949840
-    // Claire Lee ----
+    // Claire Lee ---- 100882058
     // Suthan S. -----
     //                         
     //---------------------------------------------
@@ -42,22 +45,14 @@ namespace comp2129_group_project
 
                     // Flights
                     case "2":
-                        string input2 = MenuFlights();
-                        if (input2 == "0")
-                        {
-                            userInput = MenuMain();
-                        }
-                        // TODO: Handle flights menu items
+                        HandleFlightMenu(); 
+                        userInput = MenuMain();
                         break;
 
                     // Bookings
                     case "3":
-                        string input3 = MenuBookings();
-                        if (input3 == "0")
-                        {
-                            userInput = MenuMain();
-                        }
-                        // TODO: Handle bookings menu items
+                        HandleBookingMenu(); 
+                        userInput = MenuMain();
                         break;
 
                     // Exit

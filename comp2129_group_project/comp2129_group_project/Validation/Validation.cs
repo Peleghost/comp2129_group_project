@@ -30,16 +30,19 @@ namespace comp2129_group_project.Validation
             }
         }
 
-        public static bool CustomerExists(string name, Customer[] customers)
+        public static string ValidatePhoneNum(string phoneNum)
         {
-            foreach (Customer customer in customers)
+            // Validate customer phone number
+            string pattern = @"\(\d{3}\)\d{3} \d{4}";
+
+            while (!Regex.IsMatch(phoneNum, pattern))
             {
-                if (customer.FirstName == name)
-                {
-                    return true;
-                }
+                Console.WriteLine("Make sure phone number is following this format:");
+                Console.WriteLine("(123)456 7890");
+                phoneNum = Console.ReadLine()!;
             }
-                return false;
+
+            return phoneNum;
         }
     }
 }

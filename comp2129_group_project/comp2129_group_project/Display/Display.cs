@@ -40,8 +40,42 @@ namespace comp2129_group_project.Display
             return GetInput(4);
         }
 
+        public static void DisplayAllCustomers(string[] customers)
+        {
+            Clear();
+            WriteLine("-----------------");
+            WriteLine("- All Customers -");
+            WriteLine("-----------------");
+
+            WriteLine("-----------------------------------------");
+            WriteLine("- First Name | Last Name | Phone Number -");
+            WriteLine("-----------------------------------------");
+
+            int count = 0;
+            foreach (string customer in customers)
+            {
+                if (string.IsNullOrEmpty(customer))
+                {
+                    continue;
+                }
+
+                string[] temp = customer.Split(':');
+                WriteLine($"{++count}) {temp[0]} | {temp[1]} | {temp[2]}");
+                WriteLine("---------------------------------------");
+            }
+        }
+
+        public static void CustomerExistsMsg()
+        {
+            Clear();
+            WriteLine("\n-----------------------------------");
+            WriteLine("- Sorry, customer already exists. -");
+            WriteLine("-----------------------------------");
+            Thread.Sleep(2000);
+        }
+
         // Display flights menu
-        public static string MenuFilghts()
+        public static string MenuFlights()
         {
             Clear();
             WriteLine("-----------------------------");

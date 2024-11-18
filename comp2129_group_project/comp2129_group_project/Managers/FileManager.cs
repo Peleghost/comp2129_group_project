@@ -1,4 +1,7 @@
-﻿namespace comp2129_group_project.Managers
+﻿using comp2129_group_project.Entities;
+using static comp2129_group_project.Entities.Constants;
+
+namespace comp2129_group_project.Managers
 {
     public class FileManager
     {
@@ -41,7 +44,7 @@
 
         // Gets a file based on name passed from constants
         // or as specified
-        public string GetPath(string fileName)
+        private string GetPath(string fileName)
         {
             try
             {
@@ -62,13 +65,29 @@
             }
         }
 
+
+        public void DeleteFile(string fileName)
+        {
+            try
+            {
+                string path = GetPath(fileName);
+
+                File.Delete(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         public void AppendFile(string fileName, string content)
         {
             try
             {
                 string path = GetPath(fileName);
 
-                File.AppendAllText(path, content + Environment.NewLine);
+                // Using pipe '|' as a separator of elements 
+                File.AppendAllText(path, content + "|");
             }
             catch (Exception ex)
             {
@@ -82,10 +101,10 @@
             {
                 string path = GetPath(fileName);
 
-                string[] temp = File.ReadAllLines(path);
+                string temp = File.ReadAllText(path);
 
-                // Remove new lines when reading file
-                string[] contents = temp.Where(x => x != Environment.NewLine).ToArray();
+                // Remove separator when reading file
+                string[] contents = temp.Split('|');
 
                 return contents;
             }

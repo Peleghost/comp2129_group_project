@@ -11,8 +11,4 @@
     <Compile Remove="CustomerManager.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Managers\CustomerManager.cs" />
-  </ItemGroup>
-
 </Project>

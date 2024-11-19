@@ -48,7 +48,9 @@ namespace comp2129_group_project.Managers
 
                 customerCount++;
 
+                Console.WriteLine($"\n-------------------------------------------------");
                 Console.WriteLine($"Customer {firstName} has been added successfully.");
+                Console.WriteLine($"-------------------------------------------------");
             }
             catch (ArgumentException ex)
             {
@@ -62,7 +64,7 @@ namespace comp2129_group_project.Managers
         {
             if (customerCount == 0)
             {
-                Console.WriteLine("Sorry but we could not find any customers with that informaiton you have provided.");
+                Console.WriteLine("\nSorry but we could not find any customers with that informaiton you have provided.");
             }
             else
             {
@@ -133,7 +135,9 @@ namespace comp2129_group_project.Managers
 
                     customerCount--;
 
+                    Console.WriteLine("\n---------------------------------------");
                     Console.WriteLine("Customer has been deleted successfully.");
+                    Console.WriteLine("---------------------------------------");
                 }
                 else
                 {

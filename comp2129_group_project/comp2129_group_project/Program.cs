@@ -3,6 +3,7 @@ using comp2129_group_project.Managers;
 using static comp2129_group_project.SubMenus.CustomerMenu;
 using static comp2129_group_project.SubMenus.BookingMenu;
 using static comp2129_group_project.SubMenus.FlightMenu;
+using static comp2129_group_project.Managers.FileManager;
 
 
 namespace comp2129_group_project
@@ -20,6 +21,9 @@ namespace comp2129_group_project
     //---------------------------------------------
     internal class Program
     {
+        // Used to clear all txt files, may be removed before submitting
+        private static readonly FileManager _fileManager = new();
+
         static void Main(string[] args)
         {
             //
@@ -55,6 +59,21 @@ namespace comp2129_group_project
                         userInput = MenuMain();
                         break;
 
+                    case "4":
+                        Console.WriteLine("\nType 'clear' to clear all txt files.");
+                        string input = Console.ReadLine()!;
+
+                        while (input != "clear")
+                        {
+                            Console.WriteLine("\nType 'clear' to clear all txt files.");
+                            input = Console.ReadLine()!;
+                        }
+                        
+                        _fileManager.ClearAllTxtFiles();
+                        
+                        userInput = MenuMain();
+                        break;
+                    
                     // Exit
                     case "0":
                         MenuExit();

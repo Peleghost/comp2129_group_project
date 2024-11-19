@@ -1,9 +1,0 @@
-1:NewYork:LosAngeles:50:47
-2:Toronto:Vancouver:40:35
-3:Paris:London:45:41
-4:Tokyo:Seoul:30:25
-5:Berlin:Rome:48:43
-6:SanFrancisco:Chicago:38:33
-7:Dubai:Mumbai:42:38
-
-

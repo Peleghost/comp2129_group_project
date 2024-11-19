@@ -37,6 +37,7 @@ namespace comp2129_group_project.Managers
             // Collect flight details
             Console.Write("Enter Origin: ");
             string origin = Console.ReadLine()!;
+            
             Console.Write("Enter Destination: ");
             string destination = Console.ReadLine()!;
 

@@ -6,7 +6,7 @@ namespace comp2129_group_project.Managers
     public class FileManager
     {
         // Readonly file path strings to be used internally
-        private static readonly string _projectDirectory = Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
+        private static readonly string _projectDirectory = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
         private static readonly string _fileFolder = Path.Combine(_projectDirectory, "TextFiles");
         private readonly string _customersFile = Path.Combine(_fileFolder, "customers.txt");
         private readonly string _flightsFile = Path.Combine(_fileFolder, "flights.txt");
@@ -42,6 +42,27 @@ namespace comp2129_group_project.Managers
             }
         }
 
+        // Clear all txt files for debugging
+        // May be removed once we are done
+        public void ClearAllTxtFiles()
+        {
+            try
+            {
+                if (!Directory.Exists(_fileFolder))
+                {
+                    throw new DirectoryNotFoundException("Text files folder not found");
+                }
+
+                File.WriteAllText(_customersFile, "");
+                File.WriteAllText(_flightsFile, "");
+                File.WriteAllText(_bookingsFile, "");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex.Message}");
+            }
+        }
+
         // Gets a file based on name passed from constants
         // or as specified
         private string GetPath(string fileName)
@@ -50,9 +71,9 @@ namespace comp2129_group_project.Managers
             {
                 string path = fileName switch
                 {
-                    "customers" => _customersFile,
-                    "flights" => _flightsFile,
-                    "bookings" => _bookingsFile,
+                    CUSTOMERS_FILE => _customersFile,
+                    FLIGHTS_FILE => _flightsFile,
+                    BOOKINGS_FILE => _bookingsFile,
                     _ => "",
                 };
 
@@ -60,7 +81,7 @@ namespace comp2129_group_project.Managers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine($"ERROR: {ex.Message}");
                 throw;
             }
         }
@@ -91,7 +112,7 @@ namespace comp2129_group_project.Managers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine($"ERROR: {ex.Message}");
             }
         }
 
@@ -110,7 +131,8 @@ namespace comp2129_group_project.Managers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                Console.WriteLine($"ERROR: {ex.Message}");
+                throw;
             }
         }
     }

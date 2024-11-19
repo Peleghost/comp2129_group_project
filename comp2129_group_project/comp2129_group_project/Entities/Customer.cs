@@ -27,12 +27,6 @@ namespace comp2129_group_project.Entities
             Phone = phone;
         }
 
-        // This will be validates if FirstName is not null or empty
-        public bool ValidateFirstName()
-        {
-            return !string.IsNullOrWhiteSpace(FirstName);
-        }
-
         // this method will be used to display the full name
         public override string ToString()
         {

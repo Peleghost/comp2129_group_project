@@ -16,11 +16,12 @@ namespace comp2129_group_project.Display
             WriteLine("1) Customers");
             WriteLine("2) Flights");
             WriteLine("3) Bookings");
-            WriteLine("0) Exit");
+            WriteLine("\n4) CLEAR TXT FILES");
+            WriteLine("\n0) Exit");
             WriteLine("-----------------------------");
             Write("> ");
 
-            return GetInput(4);
+            return GetInput(5);
         }
 
         // Display customers menu

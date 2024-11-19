@@ -4,14 +4,12 @@ namespace comp2129_group_project.Entities
     {
         private static int i = 0;
 
-        private int Id { get; set; } = ++i; 
-        public int CustomerId => Id; 
+        public int CustomerId { get; private set; } = ++i;
         public string? FirstName { get; private set; }
         public string? LastName { get; private set; }
         public string? Phone { get; set; }
         public int NumOfBookings { get; set; }
 
-        
         public Customer() { }
 
         public Customer(string firstName, string lastName, string phone)
@@ -27,7 +25,27 @@ namespace comp2129_group_project.Entities
             Phone = phone;
         }
 
-        // this method will be used to display the full name
+        // Serialize customer data as a single line
+        public string Serialize()
+        {
+            return $"{CustomerId}:{FirstName}:{LastName}:{Phone}";
+        }
+
+        // Deserialize customer data from a line
+        public static Customer Deserialize(string line)
+        {
+            string[] parts = line.Split(':');
+            if (parts.Length < 4)
+            {
+                throw new ArgumentException("Invalid customer data format.");
+            }
+
+            return new Customer(parts[1], parts[2], parts[3])
+            {
+                CustomerId = int.Parse(parts[0])
+            };
+        }
+
         public override string ToString()
         {
             return $"{FirstName} {LastName}";

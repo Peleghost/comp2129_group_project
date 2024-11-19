@@ -9,7 +9,7 @@ namespace comp2129_group_project.Managers
     public class FlightManager
     {
         private static readonly FileManager _fileManager = new();
-        private Flight[] flights;
+        private readonly Flight[] flights;
         private int flightCount;
         private readonly int maxFlights;
 
@@ -61,21 +61,23 @@ namespace comp2129_group_project.Managers
         // View all flights
         public void ViewFlightsInformation()
         {
-            if (flightCount == 0)
+            string[] fileContent = _fileManager.ReadFile(FLIGHTS_FILE)
+                                            .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
+                                            .ToArray();
+
+            if (fileContent.Length == 0) // Check if no flights are available
             {
-                Console.WriteLine("Sorry, but we could not find any flights.");
+                Console.WriteLine("\nSorry, but we could not find any flights.");
             }
             else
             {
-                // Read flight information from the file
-                string[] fileContent = _fileManager.ReadFile(FLIGHTS_FILE);
-
-                DisplayAllFlights(fileContent); 
+                DisplayAllFlights(fileContent); // Display the flights
             }
+
             Console.ReadKey();
         }
 
-        // View a particular flight
+      // View a particular flight
         public void ViewParticularFlight(string flightId)
         {
             Console.Clear();
@@ -128,18 +130,24 @@ namespace comp2129_group_project.Managers
             Console.WriteLine("Flight not found.");
             Console.ReadKey();
         }
-
-        // Find a flight by its ID
+        
+        // Find a flight by its ID (e.g., SM45)
         public Flight? FindFlightById(string flightId)
         {
-            for (int i = 0; i < flightCount; i++)
+            foreach (string line in _fileManager.ReadFile(FLIGHTS_FILE))
             {
-                if (flights[i]?.FlightId.ToString() == flightId)
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                // Each line format: FlightId:Origin:Destination:MaxSeats:NumOfPassengers
+                string[] parts = line.Split(":");
+                if (parts.Length == 5 && parts[0].Equals(flightId, StringComparison.OrdinalIgnoreCase))
                 {
-                    return flights[i];
+                    return new Flight(parts[0], parts[1], parts[2], int.Parse(parts[3]), int.Parse(parts[4]));
                 }
             }
-            return null; // Flight not found
+            return null; // No matching flight found
         }
+
+
     }
 }

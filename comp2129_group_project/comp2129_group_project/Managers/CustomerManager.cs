@@ -8,7 +8,6 @@ namespace comp2129_group_project.Managers
     public class CustomerManager(int maxCustomers)
     {
         private static readonly FileManager _fileManager = new();
-
         private int customerCount = _fileManager.ReadFile(CUSTOMERS_FILE).Length - 1;
         private readonly int maxCustomers = maxCustomers;
 
@@ -61,14 +60,17 @@ namespace comp2129_group_project.Managers
         }
 
         public void ViewCustomersInformation()
-        {
+        {   
+            string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE)
+                                       .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
+                                       .ToArray();
+            
             if (customerCount == 0)
             {
                 Console.WriteLine("\nSorry but we could not find any customers with that informaiton you have provided.");
             }
             else
             {
-                string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
 
                 DisplayAllCustomers(fileContent); 
             }

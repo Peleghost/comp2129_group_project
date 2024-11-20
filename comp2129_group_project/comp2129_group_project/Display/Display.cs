@@ -170,12 +170,12 @@ namespace comp2129_group_project.Display
             return GetInput(3);
         }
 
-        public static void DisplayAllBookings(string[] bookings)
+        public static void DisplayAllBookings(string[] bookings, string[] customers)
         {
             Clear();
-            WriteLine("==========================================================================");
-            WriteLine("| #   | Booking Number  | Flight ID | Customer ID | Date/Time             |");
-            WriteLine("==========================================================================");
+            WriteLine("===================================================================");
+            WriteLine("| # | Booking#  | Flight ID | Customer Name      | Date/Time     |");
+            WriteLine("===================================================================");
 
             int count = 0;
             foreach (string booking in bookings)
@@ -185,30 +185,49 @@ namespace comp2129_group_project.Display
                     continue; // Skip empty lines
                 }
 
-                string[] temp = booking.Split(':');
+                // Split into a maximum of 4 parts to preserve Date/Time
+                string[] temp = booking.Split(':', 4);
 
-                if (temp.Length == 5)
+                if (temp.Length == 4)
                 {
-                    string dateTime = $"{temp[3]} {temp[4]}";
-                    WriteLine($"| {++count,-3} | {temp[0],-15} | {temp[1],-9} | {temp[2],-10} | {dateTime,-21} |");
-                    WriteLine("--------------------------------------------------------------------------");
+                    // Extract Date/Time directly
+                    string dateTime = temp[3];
+
+                    // Find Customer Name by Customer ID
+                    string customerId = temp[2];
+                    string customerName = "Unknown";
+                    foreach (string customer in customers)
+                    {
+                        if (string.IsNullOrWhiteSpace(customer)) continue;
+
+                        string[] customerTemp = customer.Split(':');
+                        if (customerTemp.Length == 4 && customerTemp[0] == customerId)
+                        {
+                            customerName = $"{customerTemp[1]} {customerTemp[2]}"; // First Name + Last Name
+                            break;
+                        }
+                    }
+
+                    // Display booking information
+                    WriteLine($"| {++count,-2} | {temp[0],-9} | {temp[1],-8} | {customerName,-18} | {dateTime,-18} |");
+                    WriteLine("-------------------------------------------------------------------");
                 }
                 else
                 {
-                    WriteLine($"| !!! | Unable to process: {booking.PadRight(60)} |");
-                    WriteLine("--------------------------------------------------------------------------");
+                    WriteLine($"| !!! | Malformed booking entry: {booking.PadRight(52)} |");
+                    WriteLine("-------------------------------------------------------------------");
                 }
             }
 
             if (count == 0)
             {
-                WriteLine("| No bookings found. Please add bookings to view here.                   |");
-                WriteLine("==========================================================================");
+                WriteLine("| No bookings found.                                              |");
+                WriteLine("===================================================================");
             }
             else
             {
-                WriteLine($"| Successfully displayed {count} booking(s).                                   |");
-                WriteLine("==========================================================================");
+                WriteLine($"| Successfully displayed {count} booking(s).                                |");
+                WriteLine("===================================================================");
             }
         }
 

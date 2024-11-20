@@ -2,6 +2,7 @@ using comp2129_group_project.Entities;
 using static comp2129_group_project.Validation.Validation;
 using static comp2129_group_project.Entities.Constants;
 using static comp2129_group_project.Display.Display;
+using static comp2129_group_project.Managers.CustomerManager;
 using System;
 using System.Linq;
 
@@ -38,8 +39,8 @@ namespace comp2129_group_project.Managers
             Console.Write("\nEnter Flight ID: ");
             string flightId = Console.ReadLine();
             Console.Write("Enter Customer ID: ");
-            string customerId = Console.ReadLine();
-
+            string? customerId = Console.ReadLine();
+            
             Flight? flight = flightManager.FindFlightById(flightId);
             Customer? customer = customerManager.FindCustomerById(customerId);
 
@@ -79,22 +80,29 @@ namespace comp2129_group_project.Managers
             Console.ReadKey();
         }
 
-        public void ViewBookings()
+       public void ViewBookings()
         {
-            string[] fileContent = _fileManager.ReadFile(BOOKINGS_FILE)
+            // Read bookings from the bookings file
+            string[] bookings = _fileManager.ReadFile(BOOKINGS_FILE)
                                             .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
                                             .ToArray();
 
-            if (fileContent.Length == 0)
+            // Read customers from the customers file
+            string[] customers = _fileManager.ReadFile(CUSTOMERS_FILE)
+                                            .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
+                                            .ToArray();
+
+            if (bookings.Length == 0)
             {
                 Console.WriteLine("\nNo bookings found.");
             }
             else
             {
-                DisplayAllBookings(fileContent);
+                DisplayAllBookings(bookings, customers);
             }
 
             Console.ReadKey();
         }
+
     }
 }

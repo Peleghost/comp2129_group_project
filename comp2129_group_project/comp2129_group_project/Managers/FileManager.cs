@@ -1,4 +1,5 @@
 ﻿using comp2129_group_project.Entities;
+using System.Text;
 using static comp2129_group_project.Entities.Constants;
 
 namespace comp2129_group_project.Managers
@@ -93,7 +94,12 @@ namespace comp2129_group_project.Managers
             {
                 string path = GetPath(fileName);
 
-                File.Delete(path);
+                using (FileStream fs = new FileStream(path, FileMode.Truncate))
+                {
+                    File.Delete(path);
+                    fs.Close();
+                }
+
             }
             catch (Exception ex)
             {
@@ -106,9 +112,14 @@ namespace comp2129_group_project.Managers
             try
             {
                 string path = GetPath(fileName);
-
-                // Using pipe '|' as a separator of elements 
-                File.AppendAllText(path, content + "|");
+                
+                using (FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.None))
+                {
+                    content = content + "|";
+                    byte[] contentBytes = Encoding.UTF8.GetBytes(content); 
+                    fs.Write(contentBytes, 0, contentBytes.Length);
+                    fs.Close();
+                }
             }
             catch (Exception ex)
             {

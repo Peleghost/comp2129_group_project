@@ -31,7 +31,9 @@ namespace comp2129_group_project.Managers
 
             try
             {
-                Customer customer = new(firstName, lastName, phoneNum);
+                int id = GetCustomerId();
+
+                Customer customer = new(++id, firstName, lastName, phoneNum);
 
                 bool exists = CustomerExists(customer);
 
@@ -41,7 +43,7 @@ namespace comp2129_group_project.Managers
                     return;
                 }
 
-                string content = $"{firstName}:{lastName}:{phoneNum}";
+                string content = $"{customer.CustomerId}:{firstName}:{lastName}:{phoneNum}";
 
                 _fileManager.AppendFile(CUSTOMERS_FILE, content);
 
@@ -71,10 +73,28 @@ namespace comp2129_group_project.Managers
             }
             else
             {
-
                 DisplayAllCustomers(fileContent); 
             }
             Console.ReadKey();
+        }
+
+        public int GetCustomerId()
+        {
+            string[] contents = _fileManager.ReadFile(CUSTOMERS_FILE);
+            int count = contents.Length - 1;
+
+            if (count == 0)
+            {
+                return count;
+            }
+
+            string customer = contents[count - 1];
+
+            string[] temp = customer.Split(':');
+
+            int.TryParse(temp[0], out int id);
+            
+            return id;
         }
 
         public Customer? FindCustomerById(string customerId)
@@ -88,11 +108,12 @@ namespace comp2129_group_project.Managers
                 // Each line format: FirstName:LastName:Phone
                 string[] parts = line.Split(":");
                 string currentCustomerId = parts[0]; // Assuming Customer ID is stored in the first part
+                int.TryParse(currentCustomerId, out int id);
 
                 if (currentCustomerId == customerId)
                 {
                     // Return a matching Customer object
-                    return new Customer(parts[0], parts[1], parts[2]);
+                    return new Customer(id, parts[1], parts[2], parts[3]);
                 }
             }
 
@@ -100,6 +121,7 @@ namespace comp2129_group_project.Managers
             return null;
         }
 
+        // TODO: Check why file process error is thrown
         public void DeleteCustomer()
         {
             if (customerCount == 0)
@@ -118,10 +140,12 @@ namespace comp2129_group_project.Managers
 
                 if (int.TryParse(Console.ReadLine(), out int index) && index > 0 && index <= customerCount)
                 {
-                    int indexToRemove = index - 1;
+                    var customer = FindCustomerById(index.ToString());
+                    string temp = customer.Serialize();
                     
                     // Removing customer from the array
-                    string[] newContent = fileContent.Where((source, x) => x != indexToRemove).ToArray();
+                    string[] newContent = fileContent.Where(x => x != temp).ToArray();
+
 
                     // Delete file before writing new data to it
                     _fileManager.DeleteFile(CUSTOMERS_FILE);
@@ -129,10 +153,12 @@ namespace comp2129_group_project.Managers
                     // Append each line of new array to the file
                     foreach (string item in newContent)
                     {
-                        if (!string.IsNullOrEmpty(item))
+                        if (item == string.Empty)
                         {
-                            _fileManager.AppendFile(CUSTOMERS_FILE, item);
+                            continue;
                         }
+
+                        _fileManager.AppendFile(CUSTOMERS_FILE, item);
                     }
 
                     customerCount--;

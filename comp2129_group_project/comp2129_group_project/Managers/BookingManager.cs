@@ -22,7 +22,7 @@ namespace comp2129_group_project.Managers
             Console.Clear();
             Console.WriteLine("Creating a new booking...");
 
-            // Check if booking limit has been reached
+
             if (currentBookingCount >= bookings.Length)
             {
                 Console.WriteLine("Cannot create a new booking. Maximum booking limit reached.");
@@ -42,7 +42,7 @@ namespace comp2129_group_project.Managers
             string? customerId = Console.ReadLine();
             
             Flight? flight = flightManager.FindFlightById(flightId);
-            Customer? customer = customerManager.FindCustomerById(customerId);
+            Customer? customer = customerManager.FindCustomerInformationById(customerId);
 
             if (flight == null || customer == null)
             {
@@ -58,13 +58,13 @@ namespace comp2129_group_project.Managers
                 return;
             }
 
-            // Generate unique BookingNumber: B + First 2 Characters of FlightId + CustomerId + RandomCharacter + RandomNumber
+        
             string flightIdPart = flightId.Substring(0, 2).ToUpper();
             string randomChar = ((char)random.Next('A', 'Z' + 1)).ToString();
-            int randomNumber = random.Next(10, 100); // Random 2-digit number
+            int randomNumber = random.Next(10, 100); 
             string bookingNumber = $"B{flightIdPart}{customerId}{randomChar}{randomNumber}";
 
-            // Create the booking
+
             Booking newBooking = new Booking(bookingNumber, flight, customer);
 
             // Serialize and save to file
@@ -82,14 +82,14 @@ namespace comp2129_group_project.Managers
 
        public void ViewBookings()
         {
-            // Read bookings from the bookings file
+        
             string[] bookings = _fileManager.ReadFile(BOOKINGS_FILE)
-                                            .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
+                                            .Where(line => !string.IsNullOrWhiteSpace(line))
                                             .ToArray();
 
-            // Read customers from the customers file
+           
             string[] customers = _fileManager.ReadFile(CUSTOMERS_FILE)
-                                            .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
+                                            .Where(line => !string.IsNullOrWhiteSpace(line))
                                             .ToArray();
 
             if (bookings.Length == 0)

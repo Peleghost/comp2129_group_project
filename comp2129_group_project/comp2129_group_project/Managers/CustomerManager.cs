@@ -5,75 +5,95 @@ using static comp2129_group_project.Display.Display;
 
 namespace comp2129_group_project.Managers
 {
-    public class CustomerManager(int maxCustomers)
+    public class CustomerManager
     {
         private static readonly FileManager _fileManager = new();
         private int customerCount = _fileManager.ReadFile(CUSTOMERS_FILE).Length - 1;
-        private readonly int maxCustomers = maxCustomers;
+        private readonly int maxCustomers;
+
+        public CustomerManager(int maxCustomers)
+        {
+            this.maxCustomers = maxCustomers;
+        }
+
+        public static string ValidateAndFormatPhoneNumber(string phoneNumber)
+        {
+            string cleanedNumber = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+            if (cleanedNumber.Length != 10)
+            {
+                Console.WriteLine("Invalid phone number. Please enter exactly 10 digits.");
+                return "";
+            }
+
+            return $"({cleanedNumber.Substring(0, 3)}) {cleanedNumber.Substring(3, 3)}-{cleanedNumber.Substring(6)}";
+        }
 
         public void AddNewCustomer()
         {
             if (customerCount >= maxCustomers)
             {
-                Console.WriteLine("Sorry to inform you that customer list is full. At this time we cannot add more customers.");
+                Console.WriteLine("The customer list is full. We are unable to add more customers at this time.");
                 Console.ReadKey();
                 return;
             }
 
-            Console.WriteLine("Please enter the first name of the customer: ");
+            Console.WriteLine("Please enter the customer's first name:");
             string firstName = Console.ReadLine()!;
 
-            Console.WriteLine("Please enter the last name of the customer: ");
+            Console.WriteLine("Please enter the customer's last name:");
             string lastName = Console.ReadLine()!;
 
-            Console.WriteLine("Please enter phone number for the customer: ");            
-            string phoneNum = ValidatePhoneNum(Console.ReadLine()!);
+            Console.WriteLine("Please enter the customer's 10-digit phone number (spaces, dashes, or dots can be used as separators):");
+            string phoneNum = ValidateAndFormatPhoneNumber(Console.ReadLine()!);
+
+            if (string.IsNullOrEmpty(phoneNum))
+            {
+                return;
+            }
 
             try
             {
                 int id = GetCustomerId();
+                Customer customer = new(id, firstName, lastName, phoneNum);
 
-                Customer customer = new(++id, firstName, lastName, phoneNum);
-
-                bool exists = CustomerExists(customer);
-
-                if (exists)
+                if (CustomerExists(customer))
                 {
-                    CustomerExistsMsg();
+                    Console.WriteLine($"A customer with the name {firstName} {lastName} already exists.");
+                    Console.ReadKey();
                     return;
                 }
 
                 string content = $"{customer.CustomerId}:{firstName}:{lastName}:{phoneNum}";
-
                 _fileManager.AppendFile(CUSTOMERS_FILE, content);
 
                 customerCount++;
 
                 Console.WriteLine($"\n-------------------------------------------------");
-                Console.WriteLine($"Customer {firstName} has been added successfully.");
+                Console.WriteLine($"Customer {firstName} {lastName} has been successfully added.");
                 Console.WriteLine($"-------------------------------------------------");
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine($"Error: Sorry but we are unable to process at this time: {ex.Message}");
+                Console.WriteLine($"Error: Unable to process the request: {ex.Message}");
             }
 
             Console.ReadKey();
         }
 
         public void ViewCustomersInformation()
-        {   
+        {
             string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE)
-                                       .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
-                                       .ToArray();
-            
+                                               .Where(line => !string.IsNullOrWhiteSpace(line))
+                                               .ToArray();
+
             if (customerCount == 0)
             {
-                Console.WriteLine("\nSorry but we could not find any customers with that informaiton you have provided.");
+                Console.WriteLine("\nNo customers found.");
             }
             else
             {
-                DisplayAllCustomers(fileContent); 
+                DisplayAllCustomers(fileContent);
             }
             Console.ReadKey();
         }
@@ -81,23 +101,23 @@ namespace comp2129_group_project.Managers
         public int GetCustomerId()
         {
             string[] contents = _fileManager.ReadFile(CUSTOMERS_FILE);
-            int count = contents.Length - 1;
+            int maxId = 0;
 
-            if (count == 0)
+            foreach (var line in contents)
             {
-                return count;
+                if (string.IsNullOrEmpty(line)) continue;
+
+                var parts = line.Split(":");
+                if (int.TryParse(parts[0], out int id) && id > maxId)
+                {
+                    maxId = id;
+                }
             }
 
-            string customer = contents[count - 1];
-
-            string[] temp = customer.Split(':');
-
-            int.TryParse(temp[0], out int id);
-            
-            return id;
+            return maxId + 1;
         }
 
-        public Customer? FindCustomerById(string customerId)
+        public Customer? FindCustomerInformationById(string customerId)
         {
             string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
 
@@ -105,82 +125,62 @@ namespace comp2129_group_project.Managers
             {
                 if (string.IsNullOrEmpty(line)) continue;
 
-                // Each line format: FirstName:LastName:Phone
                 string[] parts = line.Split(":");
-                string currentCustomerId = parts[0]; // Assuming Customer ID is stored in the first part
-                int.TryParse(currentCustomerId, out int id);
-
-                if (currentCustomerId == customerId)
+                if (parts[0] == customerId)
                 {
-                    // Return a matching Customer object
-                    return new Customer(id, parts[1], parts[2], parts[3]);
+                    return new Customer(int.Parse(parts[0]), parts[1], parts[2], parts[3]);
                 }
             }
 
-            // No matching customer found
             return null;
         }
 
-        // TODO: Check why file process error is thrown
         public void DeleteCustomer()
         {
             if (customerCount == 0)
             {
+                Console.WriteLine("There are no customers available to delete.");
+                Console.ReadKey();
                 return;
             }
 
             ViewCustomersInformation();
 
-            Console.WriteLine("Please enter the customer number that you would like to delete:");
+            Console.WriteLine("Please enter the customer ID of the customer you would like to delete:");
             Console.Write("> ");
+            string customerIdToDelete = Console.ReadLine();
 
-            try
+            string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
+            if (fileContent == null || fileContent.Length == 0)
             {
-                string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
-
-                if (int.TryParse(Console.ReadLine(), out int index) && index > 0 && index <= customerCount)
-                {
-                    var customer = FindCustomerById(index.ToString());
-                    string temp = customer.Serialize();
-                    
-                    // Removing customer from the array
-                    string[] newContent = fileContent.Where(x => x != temp).ToArray();
-
-
-                    // Delete file before writing new data to it
-                    _fileManager.DeleteFile(CUSTOMERS_FILE);
-
-                    // Append each line of new array to the file
-                    foreach (string item in newContent)
-                    {
-                        if (item == string.Empty)
-                        {
-                            continue;
-                        }
-
-                        _fileManager.AppendFile(CUSTOMERS_FILE, item);
-                    }
-
-                    customerCount--;
-
-                    Console.WriteLine("\n---------------------------------------");
-                    Console.WriteLine("Customer has been deleted successfully.");
-                    Console.WriteLine("---------------------------------------");
-                }
-                else
-                {
-                    Console.WriteLine("Sorry but this is an invalid selection. Please try again.");
-                }
-
+                Console.WriteLine("The customer file is empty or could not be read.");
+                Console.ReadKey();
+                return;
             }
-            catch (Exception ex)
+
+            string[] updatedFileContent = fileContent.Where(line => !line.Contains(customerIdToDelete)).ToArray();
+
+            if (updatedFileContent.Length == fileContent.Length)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine($"No customer with ID {customerIdToDelete} was found.");
+                Console.ReadKey();
+                return;
             }
+
+            _fileManager.DeleteFile(CUSTOMERS_FILE);
+
+            foreach (var line in updatedFileContent)
+            {
+                _fileManager.AppendFile(CUSTOMERS_FILE, line);
+            }
+
+            Console.WriteLine($"Customer with ID {customerIdToDelete} has been successfully deleted.");
             Console.ReadKey();
+
+            Console.WriteLine("\nUpdated Customer List:");
+            ViewCustomersInformation();
         }
 
-        // Check if any of the fields already exist in the file
         private static bool CustomerExists(Customer customer)
         {
             try
@@ -194,22 +194,11 @@ namespace comp2129_group_project.Managers
 
                 foreach (string line in fileContent)
                 {
-                    if (string.IsNullOrEmpty(line))
-                    {
-                        continue;
-                    }
+                    if (string.IsNullOrEmpty(line)) continue;
 
                     string[] x = line.Split(":");
 
-                    if (x[0] == customer.FirstName)
-                    {
-                        return true;
-                    }
-                    else if (x[1] == customer.LastName)
-                    {
-                        return true;
-                    }
-                    else if (x[2] == customer.Phone)
+                    if (x[0] == customer.FirstName && x[1] == customer.LastName && x[2] == customer.Phone)
                     {
                         return true;
                     }

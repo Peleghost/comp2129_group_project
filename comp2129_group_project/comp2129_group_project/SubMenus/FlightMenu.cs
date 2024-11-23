@@ -32,9 +32,8 @@ namespace comp2129_group_project.SubMenus
                         break;
 
                     case "4": // Delete a flight
-                        Console.Write("Enter Flight Number to delete: ");
-                        string flightToDelete = Console.ReadLine();
-                        flightManager.DeleteFlight(flightToDelete);
+
+                        flightManager.DeleteFlight();
                         break;
 
                     case "5": // Back to Main Menu

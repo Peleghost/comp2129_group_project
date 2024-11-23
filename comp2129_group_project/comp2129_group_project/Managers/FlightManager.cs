@@ -17,79 +17,87 @@ namespace comp2129_group_project.Managers
         {
             this.maxFlights = maxFlights;
             flights = new Flight[maxFlights];
-            flightCount = _fileManager.ReadFile(FLIGHTS_FILE).Length - 1; // Initialize flight count
+            flightCount = _fileManager.ReadFile(FLIGHTS_FILE).Length - 1;
         }
 
-        // Add a new flight
         public void AddNewFlight()
         {
             Console.Clear();
             Console.WriteLine("Adding a new flight...");
 
-            // Check if the array is full
             if (flightCount >= maxFlights)
             {
-                Console.WriteLine("Cannot add a new flight. Maximum flight limit reached.");
+                Console.WriteLine("Maximum flight limit reached. Cannot add more flights.");
                 Console.ReadKey();
                 return;
             }
 
-            // Collect flight details
             Console.Write("Enter Origin: ");
             string origin = Console.ReadLine()!;
-            
+
             Console.Write("Enter Destination: ");
             string destination = Console.ReadLine()!;
 
-            // Create a new flight with random max seats and passengers
             Flight newFlight = new(origin, destination);
 
-            // Prepare the content to be appended to the file
             string content = $"{newFlight.FlightId}:{origin}:{destination}:{newFlight.MaxSeats}:{newFlight.NumOfPassengers}";
 
-            // Append the flight details to the file
             _fileManager.AppendFile(FLIGHTS_FILE, content);
-
-            // Add the new flight to the flights array (optional, for internal tracking)
             flights[flightCount] = newFlight;
             flightCount++;
 
-            Console.WriteLine($"Flight {newFlight.FlightId} successfully added!");
+            Console.WriteLine($"\nFlight {newFlight.FlightId} added successfully!");
             Console.ReadKey();
         }
 
-        // View all flights
         public void ViewFlightsInformation()
         {
             string[] fileContent = _fileManager.ReadFile(FLIGHTS_FILE)
-                                            .Where(line => !string.IsNullOrWhiteSpace(line)) // Exclude blank lines
-                                            .ToArray();
+                                               .Where(line => !string.IsNullOrWhiteSpace(line))
+                                               .ToArray();
 
-            if (fileContent.Length == 0) // Check if no flights are available
+            if (fileContent.Length == 0)
             {
-                Console.WriteLine("\nSorry, but we could not find any flights.");
+                Console.WriteLine("\nNo flights available at the moment.");
             }
             else
             {
-                DisplayAllFlights(fileContent); // Display the flights
+                DisplayFlightsTable(fileContent); 
             }
 
             Console.ReadKey();
         }
 
-      // View a particular flight
+        private void DisplayFlightsTable(string[] flights)
+        {
+            Console.WriteLine("\n+--------------------+--------------------+--------------------+------------+-------------------+");
+            Console.WriteLine("| Flight ID          | Origin             | Destination        | Max Seats | Passengers        |");
+            Console.WriteLine("+--------------------+--------------------+--------------------+------------+-------------------+");
+            
+            foreach (var flight in flights)
+            {
+                var parts = flight.Split(":");
+                Console.WriteLine($"| {parts[0],-18} | {parts[1],-18} | {parts[2],-18} | {parts[3],-10} | {parts[4],-17} |");
+            }
+
+            Console.WriteLine("+--------------------+--------------------+--------------------+------------+-------------------+");
+        }
+
         public void ViewParticularFlight(string flightId)
         {
             Console.Clear();
-
             Flight? flight = FindFlightById(flightId);
 
             if (flight != null)
             {
-                Console.WriteLine($"Flight Number: {flight.FlightId}");
-                Console.WriteLine($"Origin: {flight.Origin}");
-                Console.WriteLine($"Destination: {flight.Destination}");
-                Console.WriteLine($"Seats: {flight.NumOfPassengers}/{flight.MaxSeats}");
+                Console.WriteLine("Found:");
+                Console.WriteLine("+-------------------+---------------------------------+");
+                Console.WriteLine("| Flight ID         | {0,-31} |", flight.FlightId);
+                Console.WriteLine("| Origin            | {0,-31} |", flight.Origin);
+                Console.WriteLine("| Destination       | {0,-31} |", flight.Destination);
+                Console.WriteLine("| Seats             | {0,-31} |", $"{flight.NumOfPassengers}/{flight.MaxSeats}");
+                Console.WriteLine("+-------------------+---------------------------------+");
+
             }
             else
             {
@@ -98,56 +106,84 @@ namespace comp2129_group_project.Managers
             Console.ReadKey();
         }
 
-        // Delete a flight
-        public void DeleteFlight(string flightId)
+  public void DeleteFlight()
+{
+    if (flightCount == 0)
+    {
+        Console.WriteLine("No flights available to delete.");
+        Console.ReadKey();
+        return;
+    }
+    Console.WriteLine("Current Flights: ");
+    Console.WriteLine("Press Enter to proceed with the next step.");
+    ViewFlightsInformation();
+    Console.WriteLine("Please enter the flight ID of the flight you would like to delete:");
+    Console.Write("> ");
+    string flightIdToDelete = Console.ReadLine();
+
+    string[] fileContent = _fileManager.ReadFile(FLIGHTS_FILE);
+    if (fileContent == null || fileContent.Length == 0)
+    {
+        Console.WriteLine("The flight file is empty or could not be read.");
+        Console.ReadKey();
+        return;
+    }
+
+    string[] updatedFileContent = fileContent.Where(line => !line.StartsWith(flightIdToDelete + ":")).ToArray();
+
+    if (updatedFileContent.Length == fileContent.Length)
+    {
+        Console.WriteLine($"No flight with ID {flightIdToDelete} was found.");
+        Console.ReadKey();
+        return;
+    }
+
+    _fileManager.DeleteFile(FLIGHTS_FILE);
+
+    foreach (var line in updatedFileContent)
+    {
+        if (!string.IsNullOrWhiteSpace(line)) 
         {
+            _fileManager.AppendFile(FLIGHTS_FILE, line);
+        }
+    }
+
+    Console.WriteLine($"Flight with ID {flightIdToDelete} has been successfully deleted.");
+    Console.ReadKey();
+
+    Console.WriteLine("\nUpdated Flight List:");
+    ViewFlightsInformation();
+}
+
+
+        private void UpdateFlightFile()
+        {
+            _fileManager.DeleteFile(FLIGHTS_FILE);
+
             for (int i = 0; i < flightCount; i++)
             {
-                if (flights[i].FlightId.ToString() == flightId)
+                if (flights[i] != null)
                 {
-                    if (flights[i].NumOfPassengers > 0)
-                    {
-                        Console.WriteLine("Cannot delete a flight with passengers.");
-                        Console.ReadKey();
-                        return;
-                    }
-
-                    // Shift remaining flights in the array
-                    for (int j = i; j < flightCount - 1; j++)
-                    {
-                        flights[j] = flights[j + 1];
-                    }
-
-                    flights[flightCount - 1] = null; // Clear the last element
-                    flightCount--;
-
-                    Console.WriteLine($"Flight {flightId} deleted successfully.");
-                    Console.ReadKey();
-                    return;
+                    string content = $"{flights[i].FlightId}:{flights[i].Origin}:{flights[i].Destination}:{flights[i].MaxSeats}:{flights[i].NumOfPassengers}";
+                    _fileManager.AppendFile(FLIGHTS_FILE, content);
                 }
             }
-
-            Console.WriteLine("Flight not found.");
-            Console.ReadKey();
         }
-        
-        // Find a flight by its ID (e.g., SM45)
+
         public Flight? FindFlightById(string flightId)
         {
             foreach (string line in _fileManager.ReadFile(FLIGHTS_FILE))
             {
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
-                // Each line format: FlightId:Origin:Destination:MaxSeats:NumOfPassengers
                 string[] parts = line.Split(":");
-                if (parts.Length == 5 && parts[0].Equals(flightId, StringComparison.OrdinalIgnoreCase))
+                if (parts[0].Equals(flightId, StringComparison.OrdinalIgnoreCase))
                 {
                     return new Flight(parts[0], parts[1], parts[2], int.Parse(parts[3]), int.Parse(parts[4]));
                 }
             }
-            return null; // No matching flight found
-        }
-    
 
+            return null;
+        }
     }
 }

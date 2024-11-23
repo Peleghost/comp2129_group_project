@@ -16,8 +16,8 @@ namespace comp2129_group_project.Display
             WriteLine("1) Customers");
             WriteLine("2) Flights");
             WriteLine("3) Bookings");
-            WriteLine("\n4) Clear Text Files");
-            WriteLine("\n0) Exit");
+            WriteLine("4) Clear Text Files");
+            WriteLine("0) Exit");
             WriteLine("============================================");
             Write("> ");
 

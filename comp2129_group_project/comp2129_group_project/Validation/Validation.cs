@@ -30,19 +30,33 @@ namespace comp2129_group_project.Validation
             }
         }
 
-        public static string ValidatePhoneNum(string phoneNum)
+        public static bool ValidateName(string input)
         {
-            // Validate customer phone number
-            string pattern = @"\(\d{3}\)\d{3} \d{4}";
-
-            while (!Regex.IsMatch(phoneNum, pattern))
+            if (string.IsNullOrWhiteSpace(input))
             {
-                Console.WriteLine("Make sure phone number is following this format:");
-                Console.WriteLine("(123)456 7890");
-                phoneNum = Console.ReadLine()!;
+                Console.WriteLine("Name cannot be empty or contain only spaces.");
+                return false;
             }
 
-            return phoneNum;
+          
+            if (input.All(c => char.IsLetter(c) || char.IsWhiteSpace(c) || c == '\'' || c == '-'))
+            {
+                
+                if (input.Length < 2 || input.Length > 50)
+                {
+                    Console.WriteLine("Name must be between 2 and 50 characters.");
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Name must contain only letters, spaces, hyphens, or apostrophes.");
+                return false;
+            }
         }
+
+
     }
 }

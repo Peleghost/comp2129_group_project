@@ -33,25 +33,6 @@ namespace comp2129_group_project.Entities
             return $"{CustomerId}:{FirstName}:{LastName}:{Phone}";
         }
 
-        // *** NOT IN USE CURRENTLY
-        // Deserialize customer data from a line
-        //public static Customer Deserialize(string line)
-        //{
-        //    string[] parts = line.Split(':');
-        //    if (parts.Length < 4)
-        //    {
-        //        throw new ArgumentException("Invalid customer data format.");
-        //    }
-
-        //    return new Customer(parts[1], parts[2], parts[3])
-        //    {
-        //        CustomerId = int.Parse(parts[0])
-        //    };
-        //}
-
-        //public override string ToString()
-        //{
-        //    return $"{FirstName} {LastName}";
-        //}
+       
     }
 }

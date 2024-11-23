@@ -8,7 +8,6 @@ namespace comp2129_group_project.Managers
     public class CustomerManager
     {
         private static readonly FileManager _fileManager = new();
-        private int customerCount = _fileManager.ReadFile(CUSTOMERS_FILE).Length - 1;
         private readonly int maxCustomers;
 
         public CustomerManager(int maxCustomers)
@@ -16,6 +15,14 @@ namespace comp2129_group_project.Managers
             this.maxCustomers = maxCustomers;
         }
 
+        // Get the current count of customers
+        private int GetCustomerCount()
+        {
+            string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
+            return fileContent.Count(line => !string.IsNullOrWhiteSpace(line));
+        }
+
+        // Validate and format phone number
         public static string ValidateAndFormatPhoneNumber(string phoneNumber)
         {
             string cleanedNumber = new string(phoneNumber.Where(char.IsDigit).ToArray());
@@ -29,8 +36,11 @@ namespace comp2129_group_project.Managers
             return $"({cleanedNumber.Substring(0, 3)}) {cleanedNumber.Substring(3, 3)}-{cleanedNumber.Substring(6)}";
         }
 
+        // Add new customer
         public void AddNewCustomer()
         {
+            int customerCount = GetCustomerCount();
+
             if (customerCount >= maxCustomers)
             {
                 Console.WriteLine("The customer list is full. We are unable to add more customers at this time.");
@@ -38,18 +48,54 @@ namespace comp2129_group_project.Managers
                 return;
             }
 
-            Console.WriteLine("Please enter the customer's first name:");
-            string firstName = Console.ReadLine()!;
-
-            Console.WriteLine("Please enter the customer's last name:");
-            string lastName = Console.ReadLine()!;
-
-            Console.WriteLine("Please enter the customer's 10-digit phone number (spaces, dashes, or dots can be used as separators):");
-            string phoneNum = ValidateAndFormatPhoneNumber(Console.ReadLine()!);
-
-            if (string.IsNullOrEmpty(phoneNum))
+            // First Name Validation
+            string firstName;
+            while (true)
             {
-                return;
+                Console.WriteLine("Please enter the customer's first name:");
+                firstName = Console.ReadLine()!;
+                if (ValidateName(firstName))
+                {
+                    Console.WriteLine("First name is valid.");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid first name.");
+                }
+            }
+
+            // Last Name Validation
+            string lastName;
+            while (true)
+            {
+                Console.WriteLine("Please enter the customer's last name:");
+                lastName = Console.ReadLine()!;
+                if (ValidateName(lastName))
+                {
+                    Console.WriteLine("Last name is valid.");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid last name.");
+                }
+            }
+
+            // Phone Number Validation
+            string phoneNum;
+            while (true)
+            {
+                Console.WriteLine("Please enter the customer's 10-digit phone number (spaces, dashes, or dots can be used as separators):");
+                phoneNum = ValidateAndFormatPhoneNumber(Console.ReadLine()!);
+                if (!string.IsNullOrEmpty(phoneNum))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid phone number. Please enter a valid phone number.");
+                }
             }
 
             try
@@ -81,13 +127,14 @@ namespace comp2129_group_project.Managers
             Console.ReadKey();
         }
 
+        // View customers information
         public void ViewCustomersInformation()
         {
             string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE)
                                                .Where(line => !string.IsNullOrWhiteSpace(line))
                                                .ToArray();
 
-            if (customerCount == 0)
+            if (fileContent.Length == 0)
             {
                 Console.WriteLine("\nNo customers found.");
             }
@@ -98,6 +145,7 @@ namespace comp2129_group_project.Managers
             Console.ReadKey();
         }
 
+        // Get the next available customer ID
         public int GetCustomerId()
         {
             string[] contents = _fileManager.ReadFile(CUSTOMERS_FILE);
@@ -117,6 +165,7 @@ namespace comp2129_group_project.Managers
             return maxId + 1;
         }
 
+        // Find customer by ID
         public Customer? FindCustomerInformationById(string customerId)
         {
             string[] fileContent = _fileManager.ReadFile(CUSTOMERS_FILE);
@@ -135,9 +184,10 @@ namespace comp2129_group_project.Managers
             return null;
         }
 
+        // Delete customer
         public void DeleteCustomer()
         {
-            if (customerCount == 0)
+            if (GetCustomerCount() == 0)
             {
                 Console.WriteLine("There are no customers available to delete.");
                 Console.ReadKey();
@@ -171,7 +221,10 @@ namespace comp2129_group_project.Managers
 
             foreach (var line in updatedFileContent)
             {
-                _fileManager.AppendFile(CUSTOMERS_FILE, line);
+                if (!string.IsNullOrWhiteSpace(line)) 
+                {
+                    _fileManager.AppendFile(CUSTOMERS_FILE, line);
+                }
             }
 
             Console.WriteLine($"Customer with ID {customerIdToDelete} has been successfully deleted.");
@@ -181,6 +234,7 @@ namespace comp2129_group_project.Managers
             ViewCustomersInformation();
         }
 
+        // Check if a customer exists in the file
         private static bool CustomerExists(Customer customer)
         {
             try

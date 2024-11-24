@@ -13,20 +13,13 @@
 
         // Constructor for new flights
         public Flight(string origin, string destination)
-        {
-            if (string.IsNullOrWhiteSpace(origin) || origin.Length < 1)
-                throw new ArgumentException("Origin must be at least 1 character long.", nameof(origin));
-            if (string.IsNullOrWhiteSpace(destination) || destination.Length < 1)
-                throw new ArgumentException("Destination must be at least 1 character long.", nameof(destination));
-
-            Origin = origin.Trim();
-            Destination = destination.Trim();
-
+        { 
             MaxSeats = random.Next(30, 51); // Random max seats between 30 and 50
             NumOfPassengers = MaxSeats - random.Next(2, 5); // Random passengers, between MaxSeats-5 and MaxSeats-2
 
             flightCounter++;
-            FlightId = $"{Origin[0].ToString().ToUpper()}{Destination[0].ToString().ToUpper()}{MaxSeats}{flightCounter}";
+            FlightId = $"{origin[0].ToString().ToUpper()}{destination[0].ToString().ToUpper()}{MaxSeats}{flightCounter}";
+
         }
 
         // Constructor for existing flights

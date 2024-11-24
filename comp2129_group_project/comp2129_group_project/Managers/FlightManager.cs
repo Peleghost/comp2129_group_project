@@ -31,12 +31,40 @@ namespace comp2129_group_project.Managers
                 Console.ReadKey();
                 return;
             }
-
-            Console.Write("Enter Origin: ");
-            string origin = Console.ReadLine()!;
-
-            Console.Write("Enter Destination: ");
-            string destination = Console.ReadLine()!;
+            
+            //Validation for Flight Origin
+            string origin;
+            while (true)
+            {
+                Console.Write("Enter Origin: ");
+                origin = Console.ReadLine()!;
+                if (ValidateOD(origin))
+                {
+                    Console.WriteLine("Origin is valid!");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid origin!");
+                }
+            }
+            
+            //Validation for Flight Destination
+            string destination;
+            while (true)
+            {
+                Console.Write("Enter Destination: ");
+                destination = Console.ReadLine()!;
+                if (ValidateOD(destination))
+                {
+                    Console.WriteLine("Destination is valid!");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid Destination!");
+                }
+            }
 
             Flight newFlight = new(origin, destination);
 

@@ -56,7 +56,32 @@ namespace comp2129_group_project.Validation
                 return false;
             }
         }
+        
+        // Validate Origin and Destination Input
+        public static bool ValidateOD(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine("Origin/ Destination cannot be empty or contain only spaces.");
+                return false;
+            }
+            
+            if (input.All(c => char.IsLetter(c) || char.IsWhiteSpace(c) || c == '\'' || c == '-' || c == '.'))
+            {
+                if (input.Length < 3 || input.Length > 25)
+                {
+                    Console.WriteLine("Origin/ Destination must be between 3 and 25 characters.");
+                    return false;
+                }
 
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Origin/ Destination must contain only letters, spaces, hyphens, or apostrophes.");
+                return false;
+            }
+        }
 
     }
 }

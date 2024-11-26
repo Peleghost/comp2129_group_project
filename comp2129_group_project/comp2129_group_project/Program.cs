@@ -5,6 +5,14 @@ using static comp2129_group_project.SubMenus.BookingMenu;
 using static comp2129_group_project.SubMenus.FlightMenu;
 using static comp2129_group_project.Managers.FileManager;
 
+// Group Members
+// Fellipe  C.T Camargo ------101497831 
+// Ayesha Akbar --------------100949840
+// Claire Lee ----------------100882058
+// Suthan Sureshkumar --------101511337
+
+
+
 namespace comp2129_group_project
 {
     internal class Program
